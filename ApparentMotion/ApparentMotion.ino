@@ -67,10 +67,6 @@ void loop() {
           Serial.println("finished");
         }
       }
-//        if (currentTime - startTime >= (unsigned long) offset[nVibToUse-1]) {
-//        digitalWrite(vibArray[nVibToUse-1], LOW);
-//
-//      }
     }
   }
 }

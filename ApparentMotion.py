@@ -7,7 +7,7 @@ onset = [soa*i for i in range(len(vibArray))]
 offset = [onset[i]+dur for i in range(len(vibArray))]
 
 ## make serial connection to arduino
-arduinoSerialPortName = "/dev/cu.usbmodem1421"
+arduinoSerialPortName = "/dev/cu.usbmodem1411"
 connected = False
 arduino = serial.Serial(arduinoSerialPortName, 115200,timeout=2)
 ## wait for connection
