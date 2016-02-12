@@ -1,5 +1,5 @@
-/* Apparent Motion v1.0 by Sarah McIntyre
- * Last updated 2nd Feb 2016
+/* Apparent Motion v1.1 by Sarah McIntyre
+ * Last updated 12th Feb 2016
  *  
  * Up to 4 tactile actuators (e.g. vibrators, solenoids) can be used
  * to create an apparent motion stimulus.
@@ -18,10 +18,12 @@ int onset[stimMax] = {0,50,100,150};
 int offset[stimMax] = {60,110,160,210};
 
 // response variables
-const int buttonArray[3] = {2,3,4};
+const int buttonPin = 0;   // switch circuit input connected to analog pin 3
+const int maxButton = 2; // 2 if you just want response buttons; 3 if you want "go" button
+const int analogErrorWindow = 50; // error window for reading analog input (buttons)
 
 // control variables
-const int ledPin = 13;
+const int ledPin = 3;
 String pythonSays; // for reading commands from pythonboolean go = false;
 
 void setup(){
@@ -34,10 +36,8 @@ void setup(){
     pinMode(stimArray[pin], OUTPUT);
   }
 
-  // pins for button responses
-  for (pin=0; pin<3; pin++) {
-    pinMode(buttonArray[pin], INPUT);
-  }
+  // pin for button responses
+  digitalWrite(14+buttonPin, HIGH); // enable the 20k internal pullup
 
   // make serial connection
   Serial.begin(9600);
@@ -83,19 +83,24 @@ void loop() {
 // FUNCTIONS
 
 void get_response() {
-  boolean buttonPressed = false;
-  int buttonValue = -1;
-  
-  while (buttonPressed == false) {
-    for (int button = 0; button < 2; button++) {
-      buttonValue = digitalRead(buttonArray[button]);
-      if (buttonValue > 0) {
-        Serial.println("response");
-        Serial.println(button);
-        buttonPressed = true;
-      }
-    }
+  int buttonValue = 0;
+  int button = -1;
+   
+  while (button < 0 or button >= maxButton) {
+    buttonValue = analogRead(buttonPin);
+    if( buttonValue >= (767-analogErrorWindow) and buttonValue <= (767+analogErrorWindow) ) { 
+      button = 0;
+      
+    } else if ( buttonValue >= (512-analogErrorWindow) and buttonValue <= (512+analogErrorWindow) ) { 
+     button = 1;
+     
+    } else if ( buttonValue >= (256-analogErrorWindow) and buttonValue <= (256+analogErrorWindow) ) { 
+     button = 2;
+    } else
+     button = -1;  // no button found to have been pushed 
   }
+  Serial.println("response");
+  Serial.println(button);
 }
 
 void play_stim() {
@@ -108,6 +113,7 @@ void play_stim() {
 
   Serial.println("stimulus");
   startTime = millis();
+  digitalWrite(ledPin, HIGH);
   
   while (finishedOff == false) {
     currentTime = millis();
@@ -139,6 +145,7 @@ void play_stim() {
     }
     
   }
+  digitalWrite(ledPin, LOW);
 }
 
 String serial_getString(boolean echo) {
