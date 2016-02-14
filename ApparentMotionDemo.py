@@ -3,12 +3,12 @@ import serial
 ## USER INPUT ------------------------------ ##
 arduinoSerialPortName = "/dev/cu.usbmodem1421"
 stimArray = [5,6,10,11]
-soa = 100
-dur = 120
+isoi = 100
+duration = 120
 ## ----------------------------------------- ##
 
-onset = [soa*i for i in range(len(stimArray))] 
-offset = [onset[i]+dur for i in range(len(stimArray))]
+onset = [isoi*i for i in range(len(stimArray))] 
+offset = [onset[i]+duration for i in range(len(stimArray))]
 
 ## make serial connection to arduino
 arduino = serial.Serial(arduinoSerialPortName, 9600,timeout=0.05)

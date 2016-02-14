@@ -18,7 +18,7 @@ int onset[stimMax] = {0,50,100,150};
 int offset[stimMax] = {60,110,160,210};
 
 // response variables
-const int buttonPin = 0;   // switch circuit input connected to analog pin 3
+const int buttonPin = 0;   // analog pin for buttons
 const int maxButton = 2; // 2 if you just want response buttons; 3 if you want "go" button
 const int analogErrorWindow = 50; // error window for reading analog input (buttons)
 
