@@ -26,8 +26,7 @@ stimToUse = [int(i) for i in exptInfo['stimToUse'].split(',')]
 ## ----
 
 ## -- make a text file to save data --
-fileName = './'+exptInfo['dataFolder']+'/' + exptInfo['dateStr']+'_'+
-exptInfo['participantCode']+'_' + exptInfo['condition']
+fileName = './'+exptInfo['dataFolder']+'/' + exptInfo['dateStr']+'_'+ exptInfo['participantCode']+'_' + exptInfo['condition']
 dataFile = open(fileName+'.csv', 'w') 
 dataFile.write('ISOI,direction,correct\n')
 ## ----
@@ -56,14 +55,15 @@ for thisISOI in q:
     print 'ISOI: '
     print isoi
     direction = random.choice([0,1])
-    duration = int(round(isoi*1.2)) #exptInfo['duration']
+    #duration = int(round(isoi*1.2)) 
+    duration = exptInfo['duration']
     response = load_play_stim(arduino,stimToUse, isoi, 
                 duration, direction, exptInfo['orientation'])
     
     correct = response == direction
     print 'Correct '
     print correct
-    q.addResponse(correct, thisISOI)
+    q.addResponse(correct, log(isoi))
     dataFile.write('%i,%.3f,%i\n' %(isoi, direction, correct))
 ## ----
 
