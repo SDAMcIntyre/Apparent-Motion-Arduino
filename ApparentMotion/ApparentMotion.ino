@@ -1,5 +1,5 @@
-/* Apparent Motion v1.1 by Sarah McIntyre
- * Last updated 12th Feb 2016
+/* Apparent Motion v1.2 by Sarah McIntyre
+ * Last updated 24th Feb 2016
  *  
  * Up to 4 tactile actuators (e.g. vibrators, solenoids) can be used
  * to create an apparent motion stimulus.
@@ -14,25 +14,28 @@
 const int stimMax=4;
 int nStimToUse = stimMax;
 int stimArray[stimMax] = {5,6,10,11};
-int onset[stimMax] = {0,50,100,150};
-int offset[stimMax] = {60,110,160,210};
+int onset[stimMax] = {0,200,400,600};
+int offset[stimMax] = {5,205,405,605};
 
-// response variables
+// response variables 
 const int buttonPin = 0;   // analog pin for buttons
-const int maxButton = 2; // 2 if you just want response buttons; 3 if you want "go" button
+const int buttonReadValues[3] = {767,512,256};
 const int analogErrorWindow = 50; // error window for reading analog input (buttons)
+int responseButton[2] = {0,1};
+boolean useResponseButtons = true;
+int goButton[1] = {2};
+boolean useGoButton = true;
 
 // control variables
 const int ledPin = 3;
-String pythonSays; // for reading commands from pythonboolean go = false;
+String pythonSays; // for reading commands from python
 
 void setup(){
   //pin for driving LED
   pinMode(ledPin, OUTPUT);
   
   // pins for driving stimuli
-  int pin;
-  for (pin=0; pin<nStimToUse; pin++) {
+  for (int pin=0; pin<nStimToUse; pin++) {
     pinMode(stimArray[pin], OUTPUT);
   }
 
@@ -49,29 +52,41 @@ void loop() {
   while (Serial.available() <= 0) {
     // wait for serial input
   }
-  //get instructions from python over serial connection
+  
+  // get instructions from python over serial connection
   pythonSays = Serial.readString();
 
-  //checking serial connection
+  // checking serial connection
   if (pythonSays == "ping") {
     Serial.println("ack");
 
+  // use go button
+  } else if (pythonSays == "go button on") {
+    useGoButton = true;
+    Serial.println(pythonSays);
+  } else if (pythonSays == "go button off") {
+    useGoButton = false;
+    Serial.println(pythonSays);
+    
+  // use response buttons
+  } else if (pythonSays == "responses on") {
+    useResponseButtons = true;
+    Serial.println(pythonSays);
+  } else if (pythonSays == "responses off") {
+    useResponseButtons = false;
+    Serial.println(pythonSays);
+    
   // receive stimulus parameters
   } else if (pythonSays == "stim") {
-    nStimToUse = serial_getInt(true);
-    serial_getArray(stimArray,nStimToUse,true);
-    serial_getArray(onset,nStimToUse,true);
-    serial_getArray(offset,nStimToUse,true);
+    nStimToUse = serial_get_int(true);
+    serial_get_int_array(stimArray,nStimToUse,true);
+    serial_get_int_array(onset,nStimToUse,true);
+    serial_get_int_array(offset,nStimToUse,true);
 
   // play stim
   } else if (pythonSays == "go") {
-
-    // play the stimulus
     play_stim();
-
-    // get the response
-    get_response();
-
+    if (useResponseButtons) get_response();
   
   // other
   } else {
@@ -82,28 +97,35 @@ void loop() {
 
 // FUNCTIONS
 
-void get_response() {
+int get_button_press(int nButtons, int checkButton[]) {
+  digitalWrite(ledPin, HIGH);
   int buttonValue = 0;
   int button = -1;
-   
-  while (button < 0 or button >= maxButton) {
+
+  while (button < 0) {
     buttonValue = analogRead(buttonPin);
-    if( buttonValue >= (767-analogErrorWindow) and buttonValue <= (767+analogErrorWindow) ) { 
-      button = 0;
-      
-    } else if ( buttonValue >= (512-analogErrorWindow) and buttonValue <= (512+analogErrorWindow) ) { 
-     button = 1;
-     
-    } else if ( buttonValue >= (256-analogErrorWindow) and buttonValue <= (256+analogErrorWindow) ) { 
-     button = 2;
-    } else
-     button = -1;  // no button found to have been pushed 
+    for (int b=0; b<nButtons; b++) {
+      if ( buttonValue >= (buttonReadValues[checkButton[b]]-analogErrorWindow) and 
+      buttonValue <= (buttonReadValues[checkButton[b]]+analogErrorWindow) ) {
+        button = checkButton[b];
+      }
+    } 
   }
+  digitalWrite(ledPin, LOW);
+  delay(200);
+  return button;
+}
+
+void get_response() {
+  int pressed = get_button_press(2, responseButton);
   Serial.println("response");
-  Serial.println(button);
+  Serial.println(pressed);
 }
 
 void play_stim() {
+  if (useGoButton) {
+    int pressed = get_button_press(1, goButton);
+    }
   unsigned long startTime;
   unsigned long currentTime;
   boolean finishedOn = false; // have all stimuli been turned on
@@ -113,7 +135,7 @@ void play_stim() {
 
   Serial.println("stimulus");
   startTime = millis();
-  digitalWrite(ledPin, HIGH);
+  //digitalWrite(ledPin, HIGH);
   
   while (finishedOff == false) {
     currentTime = millis();
@@ -145,10 +167,10 @@ void play_stim() {
     }
     
   }
-  digitalWrite(ledPin, LOW);
+  //digitalWrite(ledPin, LOW);
 }
 
-String serial_getString(boolean echo) {
+String serial_get_string(boolean echo) {
   if (echo) Serial.println(pythonSays);
   String serialStr;
   while (Serial.available() <= 0){
@@ -159,7 +181,7 @@ String serial_getString(boolean echo) {
   return serialStr;  
 }
 
-int serial_getInt(boolean echo){
+int serial_get_int(boolean echo){
   if (echo) Serial.println(pythonSays);
   int serialInt;
   while (Serial.available() <= 0){
@@ -170,7 +192,7 @@ int serial_getInt(boolean echo){
   return serialInt;
 }
 
-void serial_getArray(int serialArray[], int arrayLength, boolean echo){
+void serial_get_int_array(int serialArray[], int arrayLength, boolean echo){
   if (echo) Serial.println(pythonSays);  
   int i=0;
   while (Serial.available() <= 0){
