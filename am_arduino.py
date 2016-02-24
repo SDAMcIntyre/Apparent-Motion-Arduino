@@ -1,4 +1,4 @@
-def load_play_stim(arduino,stimToUse,isoi,duration,direction,orientation):
+def load_play_stim(arduino,stimToUse,isoi,duration,direction,orientation,responseRequired):
     '''
     arduino: existing serial port connection to arduino
     stimToUse: an array listing which of the four solenoid stimuli to use e.g. [1,2,3,4] for 			all
@@ -78,22 +78,20 @@ def load_play_stim(arduino,stimToUse,isoi,duration,direction,orientation):
         arduinoSays = arduino.readline().strip(); print arduinoSays
     
     ## get response from arduino
-    while not arduinoSays == "response":
-        arduinoSays = arduino.readline().strip(); 
-        if len(arduinoSays) > 0:
+    if responseRequired:
+        while not arduinoSays == "response":
+            arduinoSays = arduino.readline().strip(); 
+            if len(arduinoSays) > 0:
+                print arduinoSays
+        gotResponse = False
+        while not gotResponse:
+            arduinoSays = arduino.readline().strip()
             print arduinoSays
-    gotResponse = False
-    while not gotResponse:
-        arduinoSays = arduino.readline().strip()
-        print arduinoSays
-        response = int(arduinoSays)
-        if response == 0 or response == 1:
-            gotResponse = True
-    
-    return response
-   
-  
- 
+            response = int(arduinoSays)
+            if response == 0 or response == 1:
+                gotResponse = True
+        return response
+
 
 if __name__ == "__main__":
     import serial

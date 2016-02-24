@@ -13,7 +13,8 @@ except:        # default values
                 'dataFolder':'test', 'participantCode':'P00', 
                 'condition':'4pins', 'site':'right-foot-sole', 
                 'orientation':0, 'stimToUse':'1,2,3,4', 'duration':100,
-                'preQuestTrials':[], 'nQuestTrials':40, 'startISOI':200}
+                'preQuestTrials':[], 'nQuestTrials':40, 'startISOI':200,
+                'useGoButton':True}
 exptInfo['dateStr']= data.getDateStr() #add the current time
 
 dlg = gui.DlgFromDict(exptInfo, title='Experiment details', fixed=['dateStr'])
@@ -48,6 +49,16 @@ while not connected:
         connected = True
 ## ----
 
+## -- set go button usage --
+arduinoSays = ''
+while len(arduinoSays) == 0:
+    if exptInfo['useGoButton']:
+        arduino.write("go button on")
+    else:
+        arduino.write("go button off")
+    arduinoSays = arduino.readline().strip(); print arduinoSays
+## ----
+
 ## -- run the experiment --
 for thisISOI in q:
     core.wait(0.5) # delay of 500ms
@@ -58,7 +69,7 @@ for thisISOI in q:
     #duration = int(round(isoi*1.2)) 
     duration = exptInfo['duration']
     response = load_play_stim(arduino,stimToUse, isoi, 
-                duration, direction, exptInfo['orientation'])
+                duration, direction, exptInfo['orientation'],True)
     
     correct = response == direction
     print 'Correct '
