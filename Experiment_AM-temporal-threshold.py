@@ -12,8 +12,8 @@ except:        # default values
     exptInfo = {'arduinoSerialPortName':'/dev/cu.usbmodem1411', 
                 'dataFolder':'test', 'participantCode':'P00', 
                 'condition':'4pins', 'site':'right-foot-sole', 
-                'orientation':0, 'stimToUse':'1,2,3,4', 'duration':100,
-                'preQuestTrials':[], 'nQuestTrials':40, 'startISOI':200,
+                'deviceOrientation':0, 'stimToUse':'1,2,3,4', 'stimDuration':5,
+                'preStaircaseTrials':[], 'nStaircaseTrials':40, 'startISOI':200,
                 'useGoButton':True}
 exptInfo['dateStr']= data.getDateStr() #add the current time
 
@@ -32,11 +32,12 @@ dataFile = open(fileName+'.csv', 'w')
 dataFile.write('ISOI,direction,correct\n')
 ## ----
 
-## -- setup quest --
-q = data.QuestHandler(log(exptInfo['startISOI']), log(exptInfo['startISOI']*3/4), 
-                        pThreshold = 0.82, nTrials = exptInfo['nQuestTrials'],
-                        method='quantile', grain=0.1, range=log(1000),
-                        minVal = 0, maxVal = log(1000))
+## -- setup staircase --
+s = data.StairHandler(startVal = exptInfo['startISOI'],
+                          stepType = 'log', stepSizes=0.5,
+                          minVal=0, maxVal=1000,
+                          nUp=1, nDown=3,  #will home in on the 80% threshold
+                          nTrials=exptInfo['nStaircaseTrials'])
 ## ----
 
 ## -- make serial connection to arduino --
@@ -60,30 +61,45 @@ while len(arduinoSays) == 0:
 ## ----
 
 ## -- run the experiment --
-for thisISOI in q:
-    isoi = int(round(exp(thisISOI)))
-    print 'ISOI: '
-    print isoi
+arduinoSays = ''
+trialNum = 0
+for suggestedISOI in s:
+    trialNum+=1
+    
+    ## turn off go button after first trial
+    if trialNum > 1:
+        while len(arduinoSays) == 0:
+            arduino.write("go button off")
+            arduinoSays = arduino.readline().strip(); print arduinoSays
+        
+    isoi = int(round(suggestedISOI))
+    print('ISOI: {}ms' .format(isoi))
     direction = random.choice([0,1])
-    #duration = int(round(isoi*1.2)) 
-    duration = exptInfo['duration']
+    
+    ## play the stimulus and get the response
     response = load_play_stim(arduino,stimToUse, isoi, 
-                duration, direction, exptInfo['orientation'],True)
+                exptInfo['stimDuration'], direction, exptInfo['deviceOrientation'],True)
     
     correct = response == direction
-    print 'Correct '
-    print correct
-    q.addResponse(correct, log(isoi))
-    dataFile.write('%i,%.3f,%i\n' %(isoi, direction, correct))
+    print('Correct : {}' .format(correct))
+    s.addResponse(correct, isoi)
+    dataFile.write('{},{},{}\n' .format(isoi, direction, correct))
+    print '{} of {} trials complete\n\n' .format(trialNum, exptInfo['nStaircaseTrials'])
 ## ----
 
 ## -- end of experiment --
 dataFile.close()
 
-q.saveAsPickle(fileName) #special python binary file to save all the info
+s.saveAsPickle(fileName) #special python binary file to save all the info
+
+## -- use quest to estimate threshold -- ##
+q = data.QuestHandler(log(exptInfo['startISOI']), log(exptInfo['startISOI']), 
+                        pThreshold = 0.82, nTrials = exptInfo['nStaircaseTrials'],
+                        grain=0.1, range=log(1000),
+                        minVal = 0, maxVal = log(1000),
+                        staircase = s)
+                        
 
 # print results
-print 'threshold:'
-print exp(q.mean())
-print 'sd:'
-print exp(q.sd())
+print('threshold: {}' .format(exp(q.mean())))
+print('sd: {}' .format(exp(q.sd()))
