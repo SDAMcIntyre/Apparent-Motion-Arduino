@@ -1,9 +1,8 @@
-from psychopy import core, gui, data, event
+from psychopy import core, gui, data
 from psychopy.tools.filetools import fromFile, toFile
-import time, numpy, random, os
-import serial
-from am_arduino import *
+import numpy, random, os, serial
 from math import *
+from am_arduino import *
 
 ## -- get input from experimenter --
 try:
@@ -101,21 +100,26 @@ for trialNum in range(nTrials):
             arduinoSays = arduino.readline().strip()
             if exptInfo['14. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
     
+    ## get the isoi for this trial
     if trialNum < nPracTrials:
         isoi = preISOI[trialNum]
     else:
         isoi = int(round(s.next()))
     print('ISOI: {}ms' .format(isoi))
-    direction = random.choice([0,1])
+    
+    ## get the direction for this trial
+    if trialNum % 4 == 0: directionOrder = random.sample([0,1,0,1],4)
+    direction = directionOrder[trialNum % 4]
     
     ## play the stimulus and get the response
     response = load_play_stim(arduino,stimToUse, isoi, 
                 exptInfo['07. Probe activation duration'], direction, 
                 exptInfo['12. Device orientation (0 or 1)'],responseRequired = True,
                 printMessages = exptInfo['14. Print arduino messages'])
-    
     correct = response == direction
     print('Correct : {}' .format(correct))
+    
+    ## record the data if not a practice trial
     if trialNum < nPracTrials:
         print('practice')
     else:
