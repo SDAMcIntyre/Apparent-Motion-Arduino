@@ -77,10 +77,13 @@ void loop() {
     Serial.println(pythonSays);
     
   // receive stimulus parameters
-  } else if (pythonSays == "stim") {
+  } else if (pythonSays == "nStim") {
     nStimToUse = serial_get_int(true);
+  } else if (pythonSays == "stimArray") {
     serial_get_int_array(stimArray,nStimToUse,true);
+  } else if (pythonSays == "onset") {
     serial_get_int_array(onset,nStimToUse,true);
+  } else if (pythonSays == "offset") {
     serial_get_int_array(offset,nStimToUse,true);
 
   // play stim
@@ -132,13 +135,13 @@ void play_stim() {
   int iOn = 0; // iterate through onset times
   int iOff = 0; // iterate through offset times
 
+  Serial.println("stimulus");
   if (useGoButton) {
     digitalWrite(ledPin, HIGH);
     int pressed = get_button_press(1, goButton);
     digitalWrite(ledPin, LOW);
     }
   delay(500);
-  Serial.println("stimulus");
   startTime = millis();
   
   while (finishedOff == false) {
