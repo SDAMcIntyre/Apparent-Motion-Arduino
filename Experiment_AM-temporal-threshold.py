@@ -61,7 +61,6 @@ while len(arduinoSays) == 0:
 
 ## -- run the experiment --
 for thisISOI in q:
-    core.wait(0.5) # delay of 500ms
     isoi = int(round(exp(thisISOI)))
     print 'ISOI: '
     print isoi

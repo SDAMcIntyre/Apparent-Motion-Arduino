@@ -98,7 +98,6 @@ void loop() {
 // FUNCTIONS
 
 int get_button_press(int nButtons, int checkButton[]) {
-  digitalWrite(ledPin, HIGH);
   int buttonValue = 0;
   int button = -1;
 
@@ -108,11 +107,12 @@ int get_button_press(int nButtons, int checkButton[]) {
       if ( buttonValue >= (buttonReadValues[checkButton[b]]-analogErrorWindow) and 
       buttonValue <= (buttonReadValues[checkButton[b]]+analogErrorWindow) ) {
         button = checkButton[b];
+        digitalWrite(ledPin, HIGH);
       }
     } 
   }
+  delay(10);
   digitalWrite(ledPin, LOW);
-  delay(200);
   return button;
 }
 
@@ -123,9 +123,6 @@ void get_response() {
 }
 
 void play_stim() {
-  if (useGoButton) {
-    int pressed = get_button_press(1, goButton);
-    }
   unsigned long startTime;
   unsigned long currentTime;
   boolean finishedOn = false; // have all stimuli been turned on
@@ -133,9 +130,12 @@ void play_stim() {
   int iOn = 0; // iterate through onset times
   int iOff = 0; // iterate through offset times
 
+  if (useGoButton) {
+    int pressed = get_button_press(1, goButton);
+    }
+  delay(500);
   Serial.println("stimulus");
   startTime = millis();
-  //digitalWrite(ledPin, HIGH);
   
   while (finishedOff == false) {
     currentTime = millis();
@@ -167,7 +167,6 @@ void play_stim() {
     }
     
   }
-  //digitalWrite(ledPin, LOW);
 }
 
 String serial_get_string(boolean echo) {
