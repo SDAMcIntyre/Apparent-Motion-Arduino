@@ -96,10 +96,9 @@ s.saveAsPickle(fileName) #special python binary file to save all the info
 q = data.QuestHandler(log(exptInfo['startISOI']), log(exptInfo['startISOI']), 
                         pThreshold = 0.82, nTrials = exptInfo['nStaircaseTrials'],
                         grain=0.1, range=log(1000),
-                        minVal = 0, maxVal = log(1000),
-                        staircase = s)
-                        
-
+                        minVal = 0, maxVal = log(1000))
+isois = [log(i) for i in s.intensities]
+q.importData(isois,s.data)
 # print results
 print('threshold: {}' .format(exp(q.mean())))
-print('sd: {}' .format(exp(q.sd()))
+print('sd: {}' .format(exp(q.sd())))
