@@ -86,7 +86,12 @@ void loop() {
   // play stim
   } else if (pythonSays == "go") {
     play_stim();
-    if (useResponseButtons) get_response();
+    if (useResponseButtons) {
+      get_response();
+      digitalWrite(ledPin, HIGH);
+      delay(50);
+      digitalWrite(ledPin, LOW);
+    }
   
   // other
   } else {
@@ -107,12 +112,9 @@ int get_button_press(int nButtons, int checkButton[]) {
       if ( buttonValue >= (buttonReadValues[checkButton[b]]-analogErrorWindow) and 
       buttonValue <= (buttonReadValues[checkButton[b]]+analogErrorWindow) ) {
         button = checkButton[b];
-        digitalWrite(ledPin, HIGH);
       }
     } 
   }
-  delay(10);
-  digitalWrite(ledPin, LOW);
   return button;
 }
 
@@ -131,7 +133,9 @@ void play_stim() {
   int iOff = 0; // iterate through offset times
 
   if (useGoButton) {
+    digitalWrite(ledPin, HIGH);
     int pressed = get_button_press(1, goButton);
+    digitalWrite(ledPin, LOW);
     }
   delay(500);
   Serial.println("stimulus");
