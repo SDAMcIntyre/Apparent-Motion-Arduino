@@ -133,8 +133,8 @@ if exptInfo['08. Number of adaptive trials'] > 0:
     s.saveAsPickle(fileName) #special python binary file to save all the info
     q = data.QuestHandler(log(exptInfo['06. First ISOI (ms)']), log(exptInfo['06. First ISOI (ms)']), 
                             pThreshold = 0.82, nTrials = exptInfo['08. Number of adaptive trials'],
-                            grain=0.1, range=log(1000),
-                            minVal = 0, maxVal = log(1000))
+                            grain=0.1, range=10,
+                            minVal = 0, maxVal = 7)
     isois = [log(i) for i in s.intensities]
     q.importData(isois,s.data)
     threshold = exp(q.mean())
