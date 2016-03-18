@@ -34,10 +34,8 @@ if dlg.OK:
     participantInfo['14. Neuropathy Symptom Score (0-4)'] = nss
     participantInfo.update(nssInfo)
 
-classicTests = {'15A. Monofilament arch (grams)':0,
-                '15B. Monofilament leg (grams)':0,
-                '16A. Neurothesiometer arch (Volts)':0,
-                '16B. Neurothesiometer leg (Volts)':0,
+classicTests = {'15. Monofilament toe (grams)':0,
+                '16. Neurothesiometer toe (Volts)':0,
                 '17. Nerve conduction velocity (mps)':0}
 dlg = gui.DlgFromDict(classicTests, title='Classic tests')
 if dlg.OK:
