@@ -1,6 +1,6 @@
 from psychopy import core, gui, data
 from psychopy.tools.filetools import fromFile, toFile
-import numpy, random, os, serial
+import numpy, random, os, serial, pygame
 from math import *
 from am_arduino import *
 
@@ -15,32 +15,37 @@ except:        # default values
                 '04. Probe separation (cm)':34, 
                 '05. Stimulation site':'right foot', 
                 '06. First ISOI (ms)':200,
-                '07. Probe activation duration':5,
-                '08. Number of adaptive trials':40, 
-                '09. Practice ISOIs':'500,300', 
-                '10. Use GO button':True,
-                '11. Folder for saving data':'test', 
-                '12. Device orientation (0 or 1)':0, 
-                '13. Arduino serial port':'/dev/cu.usbmodem1411', 
-                '14. Print arduino messages':False}
-exptInfo['15. Date and time']= data.getDateStr(format='%Y-%m-%d_%H-%M-%S') #add the current time
+                '07. Probe activation duration (ms)':100,
+                '08. Number of staircases':1,
+                '09. Number of trials per staircase':40, 
+                '10. Practice ISOIs':'500,300', 
+                '11. Min ISOI (ms)':5,
+                '12. Max ISOI (ms)':500,
+                '13. Use GO button':True,
+                '14. Provide feedback':True,
+                '15. Folder for saving data':'test', 
+                '16. Device orientation (0 or 1)':0, 
+                '17. Arduino serial port':'/dev/cu.usbmodem1411', 
+                '18. Print arduino messages':False}
+exptInfo['19. Date and time']= data.getDateStr(format='%Y-%m-%d_%H-%M-%S') #add the current time
 
-dlg = gui.DlgFromDict(exptInfo, title='Experiment details', fixed=['15. Date and time'])
+dlg = gui.DlgFromDict(exptInfo, title='Experiment details', fixed=['19. Date and time'])
 if dlg.OK:
     toFile('lastParams.pickle', exptInfo) # save params to file for next time
 else:
     core.quit() # the user hit cancel so exit
+    
 
 stimToUse = [int(i) for i in exptInfo['03. Probes to use (1-4)'].split(',')]
 try:
-    preISOI = [int(i) for i in exptInfo['09. Practice ISOIs'].split(',')]
+    preISOI = [int(i) for i in exptInfo['10. Practice ISOIs'].split(',')]
 except:
     preISOI = []
 ## ----
 
 ## -- make folder/files to save data --
-if exptInfo['08. Number of adaptive trials'] > 0:
-    dataFolder = './'+exptInfo['11. Folder for saving data']+'/'
+if exptInfo['09. Number of trials per staircase'] > 0:
+    dataFolder = './'+exptInfo['15. Folder for saving data']+'/'
     if not os.path.exists(dataFolder):
         os.makedirs(dataFolder)
         writeHeaders = True
@@ -48,7 +53,7 @@ if exptInfo['08. Number of adaptive trials'] > 0:
         writeHeaders = False
     thresholdData = open(dataFolder + 'thresholdData.csv', 'a')
     if writeHeaders: thresholdData.write('threshold,sd,order,participant,nProbes,separation,site,dateTime\n')
-    fileName = dataFolder + exptInfo['15. Date and time']+'_'+ exptInfo['01. Participant Code']
+    fileName = dataFolder + exptInfo['19. Date and time']+'_'+ exptInfo['01. Participant Code']
     trialData = open(fileName+'.csv', 'w') 
     trialData.write('ISOI,direction,correct\n')
 else:
@@ -59,37 +64,46 @@ else:
 ## -- setup staircase --
 s = data.StairHandler(startVal = exptInfo['06. First ISOI (ms)'],
                           stepType = 'log', stepSizes=0.5,
-                          minVal=1, maxVal=1000,
+                          minVal=exptInfo['11. Min ISOI (ms)'], 
+                          maxVal=exptInfo['12. Max ISOI (ms)'],
                           nUp=1, nDown=3,  #will home in on the 80% threshold
-                          nTrials=exptInfo['08. Number of adaptive trials'])
+                          nTrials=exptInfo['09. Number of trials per staircase'])
+## ----
+
+## -- setup feedback --
+if exptInfo['14. Provide feedback']:
+    pygame.mixer.pre_init() 
+    pygame.init()
+    sounds = [pygame.mixer.Sound('incorrect.wav'),pygame.mixer.Sound('correct.wav')]
+    feedbackText = ['Incorrect','Correct']
 ## ----
 
 ## -- make serial connection to arduino --
-arduino = serial.Serial(exptInfo['13. Arduino serial port'], 9600,timeout=0.05)
+arduino = serial.Serial(exptInfo['17. Arduino serial port'], 9600,timeout=0.05)
 arduinoSays = ''
 while not arduinoSays == 'ack':
     arduino.write('ping') 
     arduinoSays = arduino.readline().strip()
-    if exptInfo['14. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays)) 
+    if exptInfo['18. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays)) 
 ## ----
 
 ## -- set go button usage --
 goButtonSet = False
 arduinoSays = ''
 while not goButtonSet:
-    if exptInfo['10. Use GO button']:
+    if exptInfo['13. Use GO button']:
         message = 'go button on'
     else:
         message = 'go button off'
     arduino.write(message)
     arduinoSays = arduino.readline().strip()
-    if exptInfo['14. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
+    if exptInfo['18. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
     if arduinoSays == message: goButtonSet = True
 ## ----
 
 ## -- run the experiment --
 nPracTrials = len(preISOI)
-nTrials = nPracTrials + exptInfo['08. Number of adaptive trials']
+nTrials = nPracTrials + exptInfo['09. Number of trials per staircase']
 for trialNum in range(nTrials):
     ## turn off go button after first trial
     if trialNum == 1:
@@ -98,7 +112,7 @@ for trialNum in range(nTrials):
         while not arduinoSays == message:
             arduino.write(message)
             arduinoSays = arduino.readline().strip()
-            if exptInfo['14. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
+            if exptInfo['18. Print arduino messages'] and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
     
     ## get the isoi for this trial
     if trialNum < nPracTrials:
@@ -113,11 +127,18 @@ for trialNum in range(nTrials):
     
     ## play the stimulus and get the response
     response = load_play_stim(arduino,stimToUse, isoi, 
-                exptInfo['07. Probe activation duration'], direction, 
-                exptInfo['12. Device orientation (0 or 1)'],responseRequired = True,
-                printMessages = exptInfo['14. Print arduino messages'])
+                exptInfo['07. Probe activation duration (ms)'], direction, 
+                exptInfo['16. Device orientation (0 or 1)'],responseRequired = True,
+                printMessages = exptInfo['18. Print arduino messages'])
     correct = response == direction
-    print('Correct : {}' .format(correct))
+    
+    ## provide feedback
+    if exptInfo['14. Provide feedback']:
+        feedbackSound = sounds[correct]
+        ch = feedbackSound.play()
+        print(feedbackText[correct])
+        while ch.get_busy():
+            pass
     
     ## record the data if not a practice trial
     if trialNum < nPracTrials:
@@ -129,12 +150,16 @@ for trialNum in range(nTrials):
 ## ----
 
 ## -- use quest to estimate threshold --
-if exptInfo['08. Number of adaptive trials'] > 0:
+if exptInfo['09. Number of trials per staircase'] > 0:
     s.saveAsPickle(fileName) #special python binary file to save all the info
-    q = data.QuestHandler(log(exptInfo['06. First ISOI (ms)']), log(exptInfo['06. First ISOI (ms)']), 
-                            pThreshold = 0.82, nTrials = exptInfo['08. Number of adaptive trials'],
-                            grain=0.1, range=10,
-                            minVal = 0, maxVal = 7)
+    q = data.QuestHandler(log(exptInfo['06. First ISOI (ms)']), 
+                            log(exptInfo['06. First ISOI (ms)']), 
+                            pThreshold = 0.82, 
+                            nTrials = exptInfo['09. Number of trials per staircase'],
+                            grain=0.1, 
+                            range=10,
+                            minVal = log(exptInfo['11. Min ISOI (ms)']), 
+                            maxVal = log(exptInfo['12. Max ISOI (ms)']))
     isois = [log(i) for i in s.intensities]
     q.importData(isois,s.data)
     threshold = exp(q.mean())
@@ -148,7 +173,7 @@ if exptInfo['08. Number of adaptive trials'] > 0:
                         len(stimToUse),
                         exptInfo['04. Probe separation (cm)'],
                         exptInfo['05. Stimulation site'],
-                        exptInfo['15. Date and time']))
+                        exptInfo['19. Date and time']))
     thresholdData.close()
     trialData.close()
 else:
