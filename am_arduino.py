@@ -105,9 +105,26 @@ def load_play_stim(arduino,stimToUse,isoi,duration,direction,orientation,respons
         return None
     ## ----
 
+def set_go_button(setting,arduino,printMessages):
+    goButtonSet = False
+    arduinoSays = ''
+    while not goButtonSet:
+        if setting:
+            message = 'go button on'
+        else:
+            message = 'go button off'
+        arduino.write(message)
+        arduinoSays = arduino.readline().strip()
+        if printMessages and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
+        if arduinoSays == message: goButtonSet = True
+    return None
+
 if __name__ == "__main__":
     import serial
     arduino = serial.Serial('/dev/cu.usbmodem1411', 9600,timeout=0.05)
     direction = 1
     response = load_play_stim(arduino,[1,2,3,4],80,50,direction,0,True,True)
     print('correct: {}' .format(response == direction))
+
+
+
