@@ -11,23 +11,22 @@
  */
 
 // stimulus variables (set to defaults)
-const int stimMax=4;
-int nStimToUse = stimMax;
-int stimArray[stimMax] = {5,6,10,11};
-int onset[stimMax] = {0,200,400,600};
-int offset[stimMax] = {5,205,405,605};
+int nStimToUse = 4; // number of stimulus actuators to use
+int stimArray[] = {5,6,10,11}; // pins that the stimulus actuators are attached to
+int onset[] = {0,200,400,600}; // relative timing for turning on stimuli
+int offset[] = {100,300,500,700}; // relative timing for turning off stimuli
 
-// response variables 
+// button variables 
 const int buttonPin = 0;   // analog pin for buttons
-const int buttonReadValues[3] = {767,512,256};
+const int buttonReadValues[] = {767,512,256}; // values expected when each button pressed
 const int analogErrorWindow = 50; // error window for reading analog input (buttons)
-int responseButton[2] = {0,1};
-boolean useResponseButtons = true;
-int goButton[1] = {2};
-boolean useGoButton = true;
+int responseButton[] = {0,1}; // first 2 buttons for user responses
+boolean useResponseButtons = true; // check for user response after playing stimulus
+int goButton[] = {2}; // 3rd button used to trigger stimulus playing
+boolean useGoButton = true; // wait for user to press go button before playing stimulus
 
 // control variables
-const int ledPin = 3;
+const int ledPin = 3; // LED indicator
 String pythonSays; // for reading commands from python
 
 void setup(){
