@@ -1,5 +1,5 @@
 /* Apparent Motion v1.2 by Sarah McIntyre
- * Last updated 24th Feb 2016
+ * Last updated 23rd March 2016
  *  
  * Up to 4 tactile actuators (e.g. vibrators, solenoids) can be used
  * to create an apparent motion stimulus.
