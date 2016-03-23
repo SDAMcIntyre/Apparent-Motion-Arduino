@@ -28,6 +28,9 @@ boolean useGoButton = true; // wait for user to press go button before playing s
 // control variables
 const int ledPin = 3; // LED indicator
 String pythonSays; // for reading commands from python
+int lag; // lag time before stimulus onset (ms)
+const int lagMinMax[] = {200,700}; // range of variable lag time (ms)
+const int unconnectedPin = 1; // analog pin for generating random numbers
 
 void setup(){
   //pin for driving LED
@@ -87,7 +90,8 @@ void loop() {
 
   // play stim
   } else if (pythonSays == "go") {
-    play_stim();
+    lag = analogRead(unconnectedPin) % (lagMinMax[1]-lagMinMax[0]) + lagMinMax[0];
+    play_stim(lag);
     if (useResponseButtons) {
       get_response();
       digitalWrite(ledPin, HIGH);
@@ -126,7 +130,7 @@ void get_response() {
   Serial.println(pressed);
 }
 
-void play_stim() {
+void play_stim(int lag) {
   unsigned long startTime;
   unsigned long currentTime;
   boolean finishedOn = false; // have all stimuli been turned on
@@ -140,7 +144,7 @@ void play_stim() {
     int pressed = get_button_press(1, goButton);
     digitalWrite(ledPin, LOW);
     }
-  delay(500);
+  delay(lag);
   startTime = millis();
   
   while (finishedOff == false) {
