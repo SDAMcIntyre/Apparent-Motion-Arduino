@@ -109,7 +109,7 @@ for trialNum in range(nTrials):
     if trialNum < nPracTrials:
         isoi = preISOI[trialNum]
     else:
-        stairNum = (trialNum - nPracTrials) % exptInfo['08. Number of staircases']
+        stairNum = (trialNum - nPracTrials+1) % exptInfo['08. Number of staircases']
         if stairNum == 0: random.shuffle(staircases)
         thisStair = staircases[stairNum]
         print(thisStair.extraInfo['Label'])
