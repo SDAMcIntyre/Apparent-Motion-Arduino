@@ -113,7 +113,9 @@ for trialNum in range(nTrials):
         stairNum = (trialNum - nPracTrials) % exptInfo['08. Number of staircases']
         if stairNum == 0: random.shuffle(staircases)
         thisStair = staircases[stairNum]
-        isoi = int(round(thisStair.next()))
+        suggestion = thisStair.next()
+        jittered = exp(log(suggestion) + random.uniform(-0.1,0.1))
+        isoi = int(round(jittered))
         print(thisStair.extraInfo['Label'])
     print('ISOI: {}ms' .format(isoi))
     
