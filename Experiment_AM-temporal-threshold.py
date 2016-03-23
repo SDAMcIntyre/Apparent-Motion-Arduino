@@ -96,6 +96,7 @@ set_go_button(exptInfo['13. Use GO button'],arduino,exptInfo['18. Print arduino 
 ## ----
 
 ## -- run the experiment --
+correctCount = 0
 nPracTrials = len(preISOI)
 nTrials = nPracTrials + exptInfo['09. Number of trials per staircase']*exptInfo['08. Number of staircases']
 directionOrder = [0,1,0,1]
@@ -126,7 +127,7 @@ for trialNum in range(nTrials):
                 exptInfo['16. Device orientation (0 or 1)'],responseRequired = True,
                 printMessages = exptInfo['18. Print arduino messages'])
     correct = response == direction
-    
+    correctCount += int(correct)
     ## provide feedback
     if exptInfo['14. Provide feedback']:
         feedbackSound = sounds[correct]
@@ -140,7 +141,7 @@ for trialNum in range(nTrials):
         print('practice')
     else:
         thisStair.addResponse(correct, isoi)
-        trialData.write('{},{},{},{}\n' .format(thisStair.extraInfo['Label'],isoi, direction, correct))
+        trialData.write('{},{},{},{}\n' .format(thisStair.extraInfo['Label'],isoi, direction, int(correct)))
     print('{} of {} trials complete\n' .format(trialNum+1, nTrials))
 ## ----
 
@@ -160,7 +161,7 @@ if exptInfo['09. Number of trials per staircase'] > 0:
         q.importData(isois,s.data)
         threshold = exp(q.mean())
         tSD = exp(q.sd())
-        print(s.extraInfo['Label'])
+        print('\n'+s.extraInfo['Label'])
         print('threshold: {}' .format(threshold))
         print('sd: {}' .format(tSD))
 
@@ -177,3 +178,4 @@ if exptInfo['09. Number of trials per staircase'] > 0:
 else:
     print('Practice only, no data saved.')
     
+print ('\n{} of {} correct ({}%).' .format(correctCount,nTrials,100*correctCount/nTrials))
