@@ -123,7 +123,7 @@ if __name__ == "__main__":
     import serial
     arduino = serial.Serial('/dev/cu.usbmodem1411', 9600,timeout=0.05)
     direction = 1
-    response = load_play_stim(arduino,[1,2,3,4],80,50,direction,0,True,True)
+    response = load_play_stim(arduino,[1,2,3,4],200,5,direction,0,True,True)
     print('correct: {}' .format(response == direction))
 
 

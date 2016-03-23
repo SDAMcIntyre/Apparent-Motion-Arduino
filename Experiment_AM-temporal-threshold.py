@@ -103,17 +103,19 @@ directionOrder = [0,1,0,1]
 for trialNum in range(nTrials):
     ## turn off go button after first trial
     if trialNum == 1:
+        print('Trying to turn off go button')
         set_go_button(False,arduino,exptInfo['18. Print arduino messages'])
     
     ## get the isoi for this trial
     if trialNum < nPracTrials:
         isoi = preISOI[trialNum]
+        print('practice')
     else:
-        stairNum = (trialNum - nPracTrials+1) % exptInfo['08. Number of staircases']
+        stairNum = (trialNum - nPracTrials) % exptInfo['08. Number of staircases']
         if stairNum == 0: random.shuffle(staircases)
         thisStair = staircases[stairNum]
-        print(thisStair.extraInfo['Label'])
         isoi = int(round(thisStair.next()))
+        print(thisStair.extraInfo['Label'])
     print('ISOI: {}ms' .format(isoi))
     
     ## get the direction for this trial
@@ -137,11 +139,10 @@ for trialNum in range(nTrials):
             pass
     
     ## record the data if not a practice trial
-    if trialNum < nPracTrials:
-        print('practice')
-    else:
+    if trialNum >= nPracTrials:
         thisStair.addResponse(correct, isoi)
         trialData.write('{},{},{},{}\n' .format(thisStair.extraInfo['Label'],isoi, direction, int(correct)))
+    
     print('{} of {} trials complete\n' .format(trialNum+1, nTrials))
 ## ----
 
