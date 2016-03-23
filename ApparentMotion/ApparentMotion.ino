@@ -91,7 +91,7 @@ void loop() {
     if (useResponseButtons) {
       get_response();
       digitalWrite(ledPin, HIGH);
-      delay(50);
+      delay(200);
       digitalWrite(ledPin, LOW);
     }
   

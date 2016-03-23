@@ -103,7 +103,6 @@ directionOrder = [0,1,0,1]
 for trialNum in range(nTrials):
     ## turn off go button after first trial
     if trialNum == 1:
-        print('Trying to turn off go button')
         set_go_button(False,arduino,exptInfo['18. Print arduino messages'])
     
     ## get the isoi for this trial
