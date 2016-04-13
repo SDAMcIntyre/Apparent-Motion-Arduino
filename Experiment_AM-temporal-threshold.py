@@ -77,7 +77,7 @@ for n in range(exptInfo['08. Number of staircases']):
 ## -- setup feedback --
 if exptInfo['14. Provide feedback']:
     pygame.mixer.pre_init() 
-    pygame.init()
+    pygame.mixer.init()
     sounds = [pygame.mixer.Sound('incorrect.wav'),pygame.mixer.Sound('correct.wav')]
     feedbackText = ['INCORRECT','CORRECT']
 ## ----
