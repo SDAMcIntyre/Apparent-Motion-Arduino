@@ -1,5 +1,5 @@
 /* Apparent Motion v1.2 by Sarah McIntyre
- * Last updated 23rd March 2016
+ * Last updated 16th May 2016
  *  
  * Up to 4 tactile actuators (e.g. vibrators, solenoids) can be used
  * to create an apparent motion stimulus.
@@ -17,7 +17,7 @@ int onset[] = {0,200,400,600}; // relative timing for turning on stimuli
 int offset[] = {100,300,500,700}; // relative timing for turning off stimuli
 
 // button variables 
-const int buttonPin = 0;   // analog pin for buttons
+const int buttonPin = A0;   // analog pin for buttons
 const int buttonReadValues[] = {767,512,256}; // values expected when each button pressed
 const int analogErrorWindow = 50; // error window for reading analog input (buttons)
 int responseButton[] = {0,1}; // first 2 buttons for user responses
@@ -42,7 +42,7 @@ void setup(){
   }
 
   // pin for button responses
-  digitalWrite(14+buttonPin, HIGH); // enable the 20k internal pullup
+  digitalWrite(buttonPin, HIGH); // enable the 20k internal pullup
 
   // make serial connection
   Serial.begin(9600);

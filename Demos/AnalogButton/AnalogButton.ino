@@ -1,6 +1,6 @@
 
 int ledPin = 3;     
-int buttonPin = 0;   // analog pin for buttons
+int buttonPin = A0;   // analog pin for buttons
 const int nButtons = 3; 
 const int buttonReadValues[3] = {767,512,256}; // expected analog read values for each button
 const int analogErrorWindow = 50; // error window for reading analog input (buttons)
@@ -11,7 +11,7 @@ void setup(){
  pinMode(ledPin, OUTPUT); 
 
  // pin for button responses
- digitalWrite(14+buttonPin, HIGH); // enable the 20k internal pullup
+ digitalWrite(buttonPin, HIGH); // enable the 20k internal pullup
 
  // make serial connection
  Serial.begin(9600);
