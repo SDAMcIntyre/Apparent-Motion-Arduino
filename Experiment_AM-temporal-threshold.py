@@ -7,7 +7,6 @@ from am_arduino import *
 ## -- get input from experimenter --
 try:
     exptInfo = fromFile('lastParams.pickle') # previous values
-    exptInfo['02. Test number'] += 1
 except:        # default values
     exptInfo = {'01. Participant Code':'P00', 
                 '02. Test number':1, 
@@ -56,9 +55,6 @@ if exptInfo['09. Number of trials per staircase'] > 0:
     fileName = dataFolder + exptInfo['19. Date and time']+'_'+ exptInfo['01. Participant Code']
     trialData = open(fileName+'.csv', 'w') 
     trialData.write('staircase,ISOI,direction,correct\n')
-else:
-    exptInfo['02. Test number'] -= 1 #practice only so don't increment the test number
-    toFile('lastParams.pickle', exptInfo) 
 ## ----
 
 ## -- setup staircases --
@@ -177,6 +173,8 @@ if exptInfo['09. Number of trials per staircase'] > 0:
                             exptInfo['19. Date and time']))
     thresholdData.close()
     trialData.close()
+    exptInfo['02. Test number'] += 1 #increment test number for next time
+    toFile(parameterFile, exptInfo) #save parameters for next time 
 else:
     print('Practice only, no data saved.')
     
