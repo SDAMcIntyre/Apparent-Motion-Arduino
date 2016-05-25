@@ -79,7 +79,10 @@ def load_play_stim(arduino,stimToUse,isoi,duration,direction,orientation,respons
     
     ## ----
     
-    ## -- play the stimulus --
+    ## -- set responses on or off
+    set_responses(responseRequired,arduino,printMessages)
+    
+    ## -- play the stimulus
     while not arduinoSays == "stimulus":
         arduino.write("go")
         arduinoSays = arduino.readline().strip()
@@ -138,14 +141,12 @@ def load_play_tactvis(arduino,tactToUse,visToUse,tactReverse,visReverse,
     ## arduino pins to use for stimulus
     tactArray = create_pin_array(tactToUse,[3,5,6,9,10,11])
     visArray = create_pin_array(visToUse,[33,35,37,39,41,43])
-    print('\ntactile pins: {}' .format(tactArray))
-    print('\nvisual pins: {}' .format(visArray))
     
     ## calculate onset and offset times based on isoi and duration
     tactOnset = [isoi*i for i in range(len(tactArray))]
     tactOffset = [tactOnset[i]+duration for i in range(len(tactArray))]
     visOnset = [isoi*i for i in range(len(visArray))]
-    visOffset = [visOnset[i]+duration for i in range(len(visArray))]
+    visOffset = [visOnset[i]+duration for i in range(len(visArray))];
     stimData = sorted(zip(tactOnset+visOnset, tactOffset+visOffset, tactArray+visArray))
     
     ##-- send stimulus values to arduino --
@@ -208,7 +209,10 @@ def load_play_tactvis(arduino,tactToUse,visToUse,tactReverse,visReverse,
     
     ## ----
     
-    ## -- play the stimulus --
+    ## -- set responses on or off
+    set_responses(responseRequired,arduino,printMessages)
+    
+    ## -- play the stimulus
     while not arduinoSays == "stimulus":
         arduino.write("go")
         arduinoSays = arduino.readline().strip()
@@ -259,17 +263,30 @@ def set_go_button(setting,arduino,printMessages):
         if arduinoSays == message: goButtonSet = True
     return None
 
+def set_responses(setting,arduino,printMessages):
+    responsesSet = False
+    arduinoSays = ''
+    while not responsesSet:
+        if setting:
+            message = 'responses on'
+        else:
+            message = 'responses off'
+        arduino.write(message)
+        arduinoSays = arduino.readline().strip()
+        if printMessages and len(arduinoSays)> 0: print('arduino: {}' .format(arduinoSays))
+        if arduinoSays == message: responsesSet = True
+    return None
+
 if __name__ == "__main__":
     import serial
-    arduino = serial.Serial('/dev/cu.usbmodem1411', 9600,timeout=0.05)
-    direction = 1
-    isoi = 1000
-    duration = 1000
-    print('trying')
-    response = load_play_stim(arduino,[1,2,3,4],isoi,duration,direction,0,False,True)
-    #response = load_play_tactvis(arduino,[1,2,3,4,5,6],[1,2,3,4,5,6],[],[],
-#                    isoi,duration,direction,0,False,True)
-    print('correct: {}' .format(response == direction))
+    arduino = serial.Serial('/dev/cu.usbmodem1421', 9600,timeout=0.05)
+    direction = 0
+    isoi = 300
+    duration = 100
+#    response = load_play_stim(arduino,[1,2,3,4],isoi,duration,direction,0,False,True)
+    load_play_tactvis(arduino,[2,3,5,6],[],[3,5],[],
+                    isoi,duration,direction,0,False,True) 
+#    print('correct: {}' .format(response == direction))
 
 
 
