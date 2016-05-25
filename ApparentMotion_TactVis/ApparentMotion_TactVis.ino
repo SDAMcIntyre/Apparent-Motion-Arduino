@@ -11,10 +11,10 @@
  */
 
 // stimulus variables (set to defaults)
-int nStimToUse = 6; // number of stimulus actuators to use
-int stimArray[] = {3,5,6,9,10,11}; //{33,35,37,39,41,43}; // pins that the stimulus actuators are attached to
-int onset[] = {0,1000,2000,3000,4000,5000}; // relative timing for turning on stimuli
-int offset[] = {500,1500,2500,3500,4500,5500}; // relative timing for turning off stimuli
+int nStimToUse = 12; // number of stimulus actuators to use
+int stimArray[] = {3,33,5,35,6,37,9,39,10,41,11,43}; // pins that the stimulus actuators are attached to
+int onset[] = {0,0,1000,1000,2000,2000,3000,3000,4000,4000,5000,5000}; // relative timing for turning on stimuli
+int offset[] = {500,500,1500,1500,2500,2500,3500,3500,4500,4500,5500,5500}; // relative timing for turning off stimuli
 
 // button variables 
 const int buttonPin = A0;   // analog pin for buttons
