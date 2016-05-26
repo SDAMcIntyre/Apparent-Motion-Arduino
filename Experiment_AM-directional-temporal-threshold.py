@@ -5,7 +5,7 @@ from math import *
 from am_arduino import *
 
 parameterFile = 'lastParams-directional.pickle'
-#parameterFile = 'practice.pickle'
+#parameterFile = 'practice-directional.pickle'
 
 ## -- get input from experimenter --
 try:
@@ -25,7 +25,7 @@ except:        # default values
                 '12. Max ISOI (ms)':300,
                 '13. Use GO button':True,
                 '14. Provide feedback':True,
-                '15. Folder for saving data':'test', 
+                '15. Folder for saving data':'Data_AM-directional-temporal-threshold', 
                 '16. Device orientation (0 or 1)':0, 
                 '17. Arduino serial port':'/dev/cu.usbmodem1411', 
                 '18. Print arduino messages':False}
@@ -186,3 +186,7 @@ for d in [0,1]:
     print ('\nDirection {}: {} of {} correct ({}%).' .format(d, correctCount[d],
                                                                 nTrials/2,
                                                                 100*correctCount[d]/(nTrials/2)) )
+
+print ('\nOverall: {} of {} correct ({}%).' .format(correctCount[0]+correctCount[1],
+                                                                nTrials,
+                                                                100*(correctCount[0]+correctCount[1])/nTrials) )
