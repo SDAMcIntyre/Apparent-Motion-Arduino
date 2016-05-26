@@ -97,30 +97,47 @@ set_go_button(exptInfo['13. Use GO button'],arduino,exptInfo['18. Print arduino 
 ## -- run the experiment --
 correctCount = [0,0]
 nPracTrials = len(preISOI)
-nTrials = nPracTrials + exptInfo['09. Number of trials per staircase']*exptInfo['08. Number of staircases']
+nStairTrials = exptInfo['09. Number of trials per staircase']*exptInfo['08. Number of staircases']
+nEasyTrials = nStairTrials/10 # will round down
+nTrials = nPracTrials + nStairTrials + nEasyTrials
 directionOrder = [0,1] # used for practice trials only
+trialType = ''
+nEasyDone = 0
 for trialNum in range(nTrials):
     ## turn off go button after first trial
     if trialNum == 1:
         set_go_button(False,arduino,exptInfo['18. Print arduino messages'])
     
-    ## get the isoi and direction for this trial
+    ## -- get the isoi and direction for this trial --
+    
+    ## practice trial
     if trialNum < nPracTrials:
+        trialType = 'practice'
+        print(trialType)
         isoi = preISOI[trialNum]
         ## get the direction for this trial
         directionNum = trialNum % len(directionOrder)
         if directionNum == 0: random.shuffle(directionOrder)
         direction = directionOrder[directionNum]
-        print('practice')
+    ## easy trial
+    elif trialNum % 11 == nPracTrials % 11:
+        trialType = 'easy'
+        print(trialType)
+        try: isoi = preISOI[0]
+        except: isoi = 300
+        direction = random.sample([0,1],1)[0]
+        nEasyDone+=1
+    ## staircase trials
     else:
-        stairNum = (trialNum - nPracTrials) % exptInfo['08. Number of staircases']
+        trialType = 'stair'
+        stairNum = (trialNum - nPracTrials - nEasyDone) % exptInfo['08. Number of staircases']
         if stairNum == 0: random.shuffle(staircases)
         thisStair = staircases[stairNum]
+        print(thisStair.extraInfo['Label'])
         suggestion = thisStair.next()
         jittered = exp(log(suggestion) + random.uniform(-0.1,0.1))
         isoi = int(round(jittered))
         direction = thisStair.extraInfo['direction']
-        print(thisStair.extraInfo['Label'])
     print('ISOI: {}ms' .format(isoi))
     
     ## play the stimulus and get the response
@@ -139,11 +156,13 @@ for trialNum in range(nTrials):
             pass
     
     ## record the data if not a practice trial
-    if trialNum >= nPracTrials:
+    if trialType == 'stair':
         thisStair.addResponse(correct, isoi)
         trialData.write('{},{},{},{}\n' .format(thisStair.extraInfo['Label'],isoi, direction, int(correct)))
     
     print('{} of {} trials complete\n' .format(trialNum+1, nTrials))
+
+print('\n=== EXPERIMENT FINISHED ===\n')
 ## ----
 
 ## -- use quest to estimate threshold --
@@ -180,7 +199,7 @@ if exptInfo['09. Number of trials per staircase'] > 0:
     exptInfo['02. Test number'] += 1 #increment test number for next time
     toFile(parameterFile, exptInfo) #save parameters for next time 
 else:
-    print('Practice only, no data saved.')
+    print('\nPractice only, no data saved.')
     
 for d in [0,1]:
     print ('\nDirection {}: {} of {} correct ({}%).' .format(d, correctCount[d],
