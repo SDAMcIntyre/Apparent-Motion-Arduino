@@ -2,13 +2,13 @@ import serial
 
 arduinoSerialPortName = "/dev/cu.usbmodem1411"
 connected = False
-arduino = serial.Serial(arduinoSerialPortName, 115200,timeout=2)
+arduino = serial.Serial(arduinoSerialPortName, 9600,timeout=0.05)
 
 ## wait for connection
 while not connected:
     arduino.write("connected") # send ping
     arduinoSays = arduino.readline()[:-2]
-    print arduinoSays
+    if len(arduinoSays) > 0: print arduinoSays
     if arduinoSays == "connected": #look for arduino ack
         connected = True
 

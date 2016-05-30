@@ -5,7 +5,8 @@ int pythonArray[4];
 const int arrayLength = sizeof(pythonArray) / sizeof(int);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  Serial.setTimeout(10);
   serial_connect();
   pythonStr = serial_getString(true);
   pythonInt = serial_getInt(true);

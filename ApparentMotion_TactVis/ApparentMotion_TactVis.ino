@@ -29,7 +29,7 @@ boolean useGoButton = false; // wait for user to press go button before playing 
 const int ledPin = 50; // LED indicator
 String pythonSays; // for reading commands from python
 int lag; // lag time before stimulus onset (ms)
-const int lagMinMax[] = {200,700}; // range of variable lag time (ms)
+const int lagMinMax[] = {0,0}; // range of variable lag time (ms)
 const int unconnectedPin = 1; // analog pin for generating random numbers
 
 void setup(){

@@ -63,6 +63,7 @@ print('Top-up time = {} sec, {} sweeps.\n' .format( float(nTopUpSweeps*presentat
 
 ## -- make serial connection to arduino --
 arduino = serial.Serial(exptInfo['18. Arduino serial port'], 9600,timeout=0.05)
+core.wait(2)
 arduinoSays = ''
 while not arduinoSays == 'ack':
     arduino.write('ping') 
@@ -108,6 +109,7 @@ for trialNum in range(exptInfo['07. Number of trials']): # main loop
     if directionNum == 0: random.shuffle(directionOrder)
     direction = directionOrder[directionNum]
     ## -- play the stimulus
+    core.wait(0.5)
     response = load_play_tactvis(arduino,testTactToUse,testVisToUse,[],[],
                         exptInfo['13. ISOI (ms)'],exptInfo['14. Duration (ms)'],
                         direction,exptInfo['17. Device orientation (0 or 1)'],
