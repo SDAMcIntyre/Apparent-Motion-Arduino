@@ -22,7 +22,7 @@ except:        # default values
                 '09. Number of trials per staircase':40, 
                 '10. Practice ISOIs':'300,300', 
                 '11. Min ISOI (ms)':3,
-                '12. Max ISOI (ms)':300,
+                '12. Max ISOI (ms)':200,
                 '13. Use GO button':True,
                 '14. Provide feedback':True,
                 '15. Folder for saving data':'Data_AM-directional-temporal-threshold', 
@@ -64,7 +64,7 @@ if exptInfo['09. Number of trials per staircase'] > 0:
 staircases=[]
 for n in range(exptInfo['08. Number of staircases']):
     thisStair = data.StairHandler(startVal = exptInfo['06. First ISOI (ms)'],
-                          stepType = 'log', stepSizes=0.5,
+                          stepType = 'log', stepSizes=0.3,
                           minVal=exptInfo['11. Min ISOI (ms)'], 
                           maxVal=exptInfo['12. Max ISOI (ms)'],
                           nUp=1, nDown=3,  #will home in on the 80% threshold
@@ -135,7 +135,7 @@ for trialNum in range(nTrials):
         thisStair = staircases[stairNum]
         print(thisStair.extraInfo['Label'])
         suggestion = thisStair.next()
-        jittered = exp(log(suggestion) + random.uniform(-0.1,0.1))
+        jittered = exp(log(suggestion)) #+ random.uniform(-0.1,0.1))
         isoi = int(round(jittered))
         direction = thisStair.extraInfo['direction']
     print('ISOI: {}ms' .format(isoi))
