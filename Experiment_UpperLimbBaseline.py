@@ -4,8 +4,8 @@ import numpy, random, os, serial, pygame
 from math import *
 from am_arduino import *
 
-parameterFile = 'lastParams-directional.pickle'
-#parameterFile = 'practice-directional.pickle'
+parameterFile = 'lastParams-upperlimb.pickle'
+#parameterFile = 'practice-upperlimb.pickle'
 
 ## -- get input from experimenter --
 try:
