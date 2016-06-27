@@ -1,0 +1,77 @@
+(dp1
+S'09. Conditioning lights (1-6)'
+p2
+V1,2,3,4,5,6
+p3
+sS'16. Folder for saving data'
+p4
+VConditioning-Test
+p5
+sS'02. Stimulation site'
+p6
+Vright hand
+p7
+sS'15. Use GO button'
+p8
+I00
+sS'05. Conditioning time (sec)'
+p9
+I5
+sS'19. Print arduino messages'
+p10
+I01
+sS'01. Participant Code'
+p11
+VP00
+p12
+sS'11. Test motors (1-6)'
+p13
+V3,4
+p14
+sS'10. Conditioning reversed motors (1-6)'
+p15
+V3,4
+p16
+sS'17. Device orientation (0 or 1)'
+p17
+I0
+sS'08. Conditioning motors (1-6)'
+p18
+V1,2,3,4,5,6
+p19
+sS'07. Number of trials'
+p20
+I10
+sS'12. Test lights (1-6)'
+p21
+V
+sS'18. Arduino serial port'
+p22
+V/dev/cu.usbmodem1411
+p23
+sS'06. Top-up time (sec)'
+p24
+I5
+sS'04. Conditioning'
+p25
+(lp26
+S'incongruent'
+p27
+aS'congruent'
+p28
+aS'off'
+p29
+asS'03. Session number'
+p30
+I1
+sS'20. Date and time'
+p31
+V2016-05-30_18-55-14
+p32
+sS'13. ISOI (ms)'
+p33
+I100
+sS'14. Duration (ms)'
+p34
+I100
+s.

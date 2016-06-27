@@ -1,5 +1,4 @@
 .DS_Store
 *.pyc
-*.pickle
-/test
-/Data_AM-directional-temporal-threshold
+/temp
+/Data

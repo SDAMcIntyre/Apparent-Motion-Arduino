@@ -1,0 +1,66 @@
+(dp1
+S'07. Probe activation duration (ms)'
+p2
+I100
+sS'08. Number of staircases'
+p3
+I2
+sS'11. Min ISOI (ms)'
+p4
+I3
+sS'14. Provide feedback'
+p5
+I00
+sS'02. Test number'
+p6
+I1
+sS'01. Participant Code'
+p7
+VP00
+p8
+sS'05. Stimulation site'
+p9
+Vright arm
+p10
+sS'17. Arduino serial port'
+p11
+V/dev/cu.usbmodem1411
+p12
+sS'09. Number of trials per staircase'
+p13
+I40
+sS'13. Use GO button'
+p14
+I01
+sS'18. Print arduino messages'
+p15
+I00
+sS'19. Date and time'
+p16
+V2016-06-27_19-21-19
+p17
+sS'10. Practice ISOIs'
+p18
+V200
+p19
+sS'06. First ISOI (ms)'
+p20
+I200
+sS'15. Folder for saving data'
+p21
+VData
+p22
+sS'12. Max ISOI (ms)'
+p23
+I200
+sS'04. Probe separation (cm)'
+p24
+I2
+sS'03. Probes to use (1-4)'
+p25
+V1,2,3,4
+p26
+sS'16. Device orientation (0 or 1)'
+p27
+I0
+s.
