@@ -16,13 +16,13 @@ except:        # default values
                 '03. Probes to use (1-4)':'1,2,3,4', 
                 '04. Probe separation (cm)':2, 
                 '05. Stimulation site':'right arm', 
-                '06. First ISOI (ms)':200,
+                '06. First ISOI (ms)':150,
                 '07. Probe activation duration (ms)':100,
                 '08. Number of staircases':2,
-                '09. Number of trials per staircase':40, 
+                '09. Number of trials per staircase':20, 
                 '10. Practice ISOIs':'200', 
                 '11. Min ISOI (ms)':3,
-                '12. Max ISOI (ms)':200,
+                '12. Max ISOI (ms)':250,
                 '13. Use GO button':True,
                 '14. Provide feedback':False,
                 '15. Folder for saving data':'Data', 
@@ -31,6 +31,7 @@ except:        # default values
                 '18. Print arduino messages':False}
 exptInfo['19. Date and time']= data.getDateStr(format='%Y-%m-%d_%H-%M-%S') #add the current time
 
+# display the dialog with fixed values greyed out
 dlg = gui.DlgFromDict(exptInfo, title='Experiment details', 
                     fixed=['19. Date and time',
                     '03. Probes to use (1-4)',
@@ -38,6 +39,7 @@ dlg = gui.DlgFromDict(exptInfo, title='Experiment details',
                     '06. First ISOI (ms)',
                     '07. Probe activation duration (ms)',
                     '08. Number of staircases',
+                    '09. Number of trials per staircase',
                     '10. Practice ISOIs',
                     '11. Min ISOI (ms)',
                     '12. Max ISOI (ms)',
@@ -74,7 +76,7 @@ if exptInfo['09. Number of trials per staircase'] > 0:
 staircases=[]
 for n in range(exptInfo['08. Number of staircases']):
     thisStair = data.StairHandler(startVal = exptInfo['06. First ISOI (ms)'],
-                          stepType = 'log', stepSizes=0.3,
+                          stepType = 'lin', stepSizes=[100,50,20,10,10,10,3],
                           minVal=exptInfo['11. Min ISOI (ms)'], 
                           maxVal=exptInfo['12. Max ISOI (ms)'],
                           nUp=1, nDown=3,  #will home in on the 80% threshold

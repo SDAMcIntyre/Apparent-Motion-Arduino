@@ -28,31 +28,31 @@ V/dev/cu.usbmodem1411
 p12
 sS'09. Number of trials per staircase'
 p13
-I40
-sS'06. First ISOI (ms)'
+I20
+sS'13. Use GO button'
 p14
-I200
+I01
 sS'18. Print arduino messages'
 p15
 I00
 sS'19. Date and time'
 p16
-V2016-06-27_19-37-31
+V2016-06-29_20-35-48
 p17
 sS'10. Practice ISOIs'
 p18
 V200
 p19
-sS'13. Use GO button'
+sS'06. First ISOI (ms)'
 p20
-I01
+I150
 sS'15. Folder for saving data'
 p21
 VData
 p22
 sS'12. Max ISOI (ms)'
 p23
-I200
+I250
 sS'04. Probe separation (cm)'
 p24
 I2
